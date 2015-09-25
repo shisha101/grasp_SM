@@ -1,0 +1,124 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro"
+       name="ur5" >
+
+  <!-- common stuff -->
+  <xacro:include filename="$(find ur_description)/urdf/gazebo.urdf.xacro" />
+
+  <!-- ur5 -->
+  <xacro:include filename="$(find ur_description)/urdf/ur5.urdf.xacro" />
+
+
+  <xacro:macro name="box_inertial" params="x y z mass *origin">
+    <inertial>
+      <mass value="${mass}" />
+      <insert_block name="origin" />
+      <inertia ixx="${0.0833333 * mass * (y*y + z*z)}" ixy="0.0" ixz="0.0"
+               iyy="${0.0833333 * mass * (x*x + z*z)}" iyz="0.0"
+               izz="${0.0833333 * mass * (x*x + y*y)}" />
+    </inertial>
+  </xacro:macro>
+  
+  <!-- Table -->
+  <link name="table" >
+    <visual>
+      <origin xyz="0.0 0.0 -0.8" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://e2u_demo_setup/meshes/table.stl" />
+      </geometry>
+      <material name="LightGrey">
+        <color rgba="0.7 0.7 0.7 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0.0 0.0 -0.8" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://e2u_demo_setup/meshes/table.stl" />
+      </geometry>
+    </collision>
+    <xacro:box_inertial x="0.8" y="2.0" z="0.8" mass="50">
+      <origin xyz="0.0 0.0 -0.8" rpy="0 0 0" />
+    </xacro:box_inertial>
+  </link>
+
+	
+	  <!-- Rotated base link -->
+  <link name="base_rotated"/>
+  
+  	<joint name="base_rotated_joint" type="fixed">
+		<parent link="table" />
+		<child link = "base_rotated" />
+		<origin xyz="0.27 0.23 0.025" rpy="0 0 ${0.785-1.57}" />
+	</joint>
+
+
+  <!-- arm -->
+  <xacro:ur5_robot prefix="" joint_limited="true"/>
+
+  	<joint name="base_joint" type="fixed">
+		<parent link="base_rotated" />
+		<child link = "base_link" />
+		<origin xyz="0 0 0" rpy="0 0 -1.57" />
+	</joint>
+
+
+  <!-- add gripper -->
+  <joint name="gripper_joint" type="fixed">
+    <parent link="ee_link" />
+    <child link = "gripper_link" />
+    <origin xyz="0.21 0.0 0.0" rpy="0.0 ${1.57+3.14} 0.0" />
+  </joint>
+  
+  <link name="gripper_link" />
+
+  <!-- add camera -->
+  <joint name="camera_joint" type="fixed">
+    <parent link="table" />
+    <child link = "camera_link" />
+    <origin xyz="0.35 0.62 0.98" rpy="0.0 1.57 3.14" />
+  </joint>
+  
+  <link name="camera_link" >
+    <visual>
+		<origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.01 0.01 0.01" />
+      </geometry>
+    </visual>
+    <collision>
+		<origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.01 0.01 0.01" />
+      </geometry>
+    </collision>
+    <!--xacro:box_inertial x="0.01" y="0.01" z="0.01" mass="1">
+      <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+    </xacro:box_inertial-->
+  </link>
+
+  <!-- container with boxes -->
+  <link name="container_link"/>
+  <!--
+	  <visual>
+      <geometry>
+        <box size="0.36 0.195 0.075"/>
+      </geometry>
+      <material name="White">
+        <color rgba="1.0 1.0 1.0 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+		<box size="0.36 0.195 0.075"/>
+      </geometry>
+    </collision>
+  </link>
+  -->
+
+  <joint name="container_joint" type="fixed">
+    <parent link="table" />
+    <child link = "container_link" />
+    <origin xyz="0.175 0.65 0.0" rpy="0.0 0.0 0.0" />
+  </joint>
+
+</robot>

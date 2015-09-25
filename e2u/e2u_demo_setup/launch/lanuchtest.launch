@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<launch>
+
+  
+  <!-- arm Gazebo this has been coppied from the ur5.launch file since we do not want to change the generic file on the git server-->
+    <arg name="limited" default="false"/>
+    <arg name="paused" default="false"/>
+    <arg name="gui" default="true"/>
+  
+    <!-- startup simulated world -->
+     <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="world_name" default="worlds/empty.world"/>
+        <arg name="paused" value="$(arg paused)"/>
+        <arg name="gui" value="$(arg gui)"/>
+     </include>
+
+    <!-- send robot urdf to param server -->
+     <param name="robot_description" command="$(find xacro)/xacro.py '$(find e2u_demo_setup)/urdf/ur5_table.urdf.xacro'" />
+
+    <!-- push robot_description to factory and spawn robot in gazebo -->
+     <node name="spawn_gazebo_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model robot -z 0.1" respawn="false" output="screen" />
+
+
+  <!-- Rviz launch -->
+  <node name="$(anon rviz)" launch-prefix="" pkg="rviz" type="rviz" respawn="false" output="screen">
+  </node>
+  
+  <!-- include file="$(find ur5_moveit_config)/launch/moveit_rviz.launch" >
+    <arg name="config" value="true" />
+  </include> -->
+  
+  <!-- basics -->
+  <param name="robot_description" command="$(find xacro)/xacro.py '$(find e2u_demo_setup)/urdf/ur5_table.urdf.xacro'" />
+    
+  <!-- send ROBOT parameters to parameter server -->
+  <rosparam command="load" ns="/script_server/arm" file="$(find e2u_demo_setup)/config/arm_joint_configurations.yaml"/>
+  
+  <!-- perception -->
+  <!--include file="$(find box_detection)/launch/simple_segmentation.launch" /-->
+  <include file="$(find agile_grasp)/launch/suction_grasp_launch.launch" />
+
+  <!-- manipulation -->
+  <!--include file="$(find ur5_moveit_config)/launch/move_group.launch" /-->
+  <include file="$(find e2u_moveit_config)/launch/move_group.launch" />
+
+</launch>

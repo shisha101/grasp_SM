@@ -1,0 +1,11 @@
+joint_names: ['shoulder_pan_joint', 'shoulder_lift_joint', 'elbow_joint','wrist_1_joint', 'wrist_2_joint', 'wrist_3_joint']
+joint_states: /joint_states
+service_ns: /
+default_vel: 0.7
+
+# back side positions
+home: [[-0.7854, -1.5707, 1.5707, 0.0, 1.5707, 1.5707]]
+upright: [[0.0, -1.5707, 0.0, -1.5707, 0.00, 0.0]]
+#pre_grasp: [[-3.9, -1.57, 1.57, -1.57, -1.57, 0.0]]
+pre_grasp: [[-2.35, -1.57, 1.57, -1.57, -1.57, 0.0]]
+retreat: [[-1.57, -1.57, 1.57, -1.57, -1.57, -0.78]]

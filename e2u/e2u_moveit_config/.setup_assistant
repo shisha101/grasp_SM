@@ -1,0 +1,8 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: e2u_demo_setup
+    relative_path: urdf/ur5_table.urdf.xacro
+  SRDF:
+    relative_path: config/ur5.srdf
+  CONFIG:
+    generated_timestamp: 1434618837
